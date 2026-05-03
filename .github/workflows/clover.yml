@@ -146,5 +146,8 @@ jobs:
       - name: 🔩 Pack Process
         uses: ./.github/workflows/pack-process
 
-      - name: ✏️ Upload
-        run: echo "Build artifacts will be uploaded by the upload step"
+      - name: ✏️ Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AnyKernel3-${{ env.DEVICE_CODENAME }}-${{ env.ROM_TEXT }}
+          path: ${{ github.workspace }}/out/AnyKernel3-*.zip
