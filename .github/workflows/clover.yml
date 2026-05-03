@@ -20,7 +20,7 @@ env:
   GCC_GNU : false
   GCC_64_SOURCE : "https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9.git"
   GCC_64_BRANCH : "android12L-release"
-  GCC_32_SOURCE : "https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/x86/x86_64-linux-android-4.9.git"
+  GCC_32_SOURCE : "https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9.git"
   GCC_32_BRANCH : "android12L-release"
 
   DEFCONFIG_SOURCE: ""
@@ -31,8 +31,9 @@ env:
   KERNELSU_SOURCE : "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh"
   KERNELSU_BRANCH : "main"
   KERNELSU_NAME : "ReSukiSU"
+
   KERNELSU_AUTO_GET : "true"
-  KERNELSU_AUTO_FORK : "resukisu"
+  KERNELSU_AUTO_FORK : "resukisu"        # 根据示例，resukisu 是有效值
   KERNELSU_METHOD: "shell"
 
   SUSFS_ENABLE : true
@@ -45,28 +46,43 @@ env:
 
   AK3_SOURCE : "https://github.com/osm0sis/AnyKernel3.git"
   AK3_BRANCH : "master"
-  BOOT_SOURCE : "https://github.com/boot_author/android_kernel_codename/raw/refs/heads/main/rom/source_imgs/boot.img"
+  BOOT_SOURCE : ""
 
+  NEED_DTBO : false
+  NEED_SAFE_DTBO : false
+
+  ROM_TEXT : "lineageos_a15"
+
+  PYTHON_VERSION: "3"
   PACK_METHOD: "Anykernel3"
   PACK_KMODULES: "false"
 
-  PYTHON_VERSION: "3"
-  ROM_TEXT : "lineageos_a15"
-  NEED_DTBO : false
-  NEED_SAFE_DTBO : false
   REKERNEL_ENABLE: "false"
-  HOOK_METHOD: "manual"          # 仍设 manual，但具体宏由脚本从 Kconfig 读取
-  KERNEL_PATCH: "true"
+  HOOK_METHOD: "syscall"                 # 保持示例默认值
+  KERNEL_PATCH: "true"                   # 4.19 内核需要这个
   KPM_ENABLE: "false"
   KPM_INLINE: "false"
+  KPM_KPATCH_NEXT: "false"
+  KPM_PATCH_SOURCE: ""
+
+  BASEBAND_GUARD_ENABLE: "false"
+  BASEBAND_GUARD_BOOT: "false"
+
   HIDE_STUFF: "false"
   GENERATE_DTB: "false"
   BUILD_DEBUGGER: "false"
+  SKIP_PATCH: "false"
+  BUILD_OTHER_CONFIG: "false"
+  FREE_MORE_SPACE: "false"
 
 jobs:
   build-kernel:
     name: Build Kernel
     runs-on: ubuntu-latest
+    env:
+      CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
+      CCACHE_NOHASHDIR: "true"
+      CCACHE_HARDLINK: "true"
 
     steps:
       - name: ⏰ Checkout repository
@@ -84,40 +100,36 @@ jobs:
       - name: 🔗 Patch for no-kprobe
         uses: ./.github/workflows/patch-no-kprobe
 
-      - name: 🪛 Extra Kernel Options (Clean Build)
+      - name: 🪛 Extra Kernel Options
         run: |
-          set -e
           cd $GITHUB_WORKSPACE/device_kernel
 
-          # 1. 干净移动源码
-          if [ -d "KernelSU" ]; then
-            rm -rf drivers/kernelsu
+          # 如果 setup.sh 未自动移动源码，则兜底处理
+          if [ -d "KernelSU" ] && [ ! -d "drivers/kernelsu" ]; then
             mv KernelSU/kernel drivers/kernelsu
             rm -rf KernelSU
-          elif [ -d "kernelsu" ]; then
-            rm -rf drivers/kernelsu
+          elif [ -d "kernelsu" ] && [ ! -d "drivers/kernelsu" ]; then
             mv kernelsu/kernel drivers/kernelsu
             rm -rf kernelsu
           fi
-          [ ! -d "drivers/kernelsu" ] && { echo "ERROR: drivers/kernelsu missing!"; exit 1; }
 
-          # 2. 仅注入配置，绝不手动改 drivers/Makefile
+          # 注入 Manual Hook 和 SUSFS 配置（如果 defconfig 中没有）
           DEFCONFIG="arch/arm64/configs/${{ env.DEFCONFIG_NAME }}"
-          cat >> "$DEFCONFIG" << 'EOF'
-          CONFIG_KALLSYMS=y
-          CONFIG_KALLSYMS_ALL=y
-          CONFIG_KSU=y
+          if ! grep -q "CONFIG_KSU_MANUAL_HOOK" "$DEFCONFIG"; then
+            cat >> "$DEFCONFIG" << 'EOF'
           CONFIG_KSU_MANUAL_HOOK=y
-          CONFIG_KSU_SUSFS=y
           # CONFIG_KSU_WITH_KPROBES is not set
           EOF
+          fi
 
-          # 3. 重新生成 .config（olddefconfig 会自动处理依赖，并把 drivers/kernelsu 拉入编译）
+          if ! grep -q "CONFIG_KSU_SUSFS" "$DEFCONFIG"; then
+            echo "CONFIG_KSU_SUSFS=y" >> "$DEFCONFIG"
+          fi
+
+          # 重新生成 .config
           mkdir -p out
           make ARCH=arm64 O=out ${{ env.DEFCONFIG_NAME }}
           make ARCH=arm64 O=out olddefconfig
-
-          echo "Extra Kernel Options done. drivers/Makefile left untouched."
 
       - name: 🧰 Patch Kernel of Re:Kernel
         uses: ./.github/workflows/patch-rekernel
@@ -133,3 +145,6 @@ jobs:
 
       - name: 🔩 Pack Process
         uses: ./.github/workflows/pack-process
+
+      - name: ✏️ Upload
+        run: echo "Build artifacts will be uploaded by the upload step"
