@@ -138,4 +138,4 @@ jobs:
         uses: ./.github/workflows/pack-process
 
       - name: ✏️ Upload Artifacts
-        uses: ./.github/workflows/upload-files/workspaces/nGKI_Kernel_Build/.github/workflows/build-poco-x5-5g-lineageos23-a16.yml
+        uses: ./.github/workflows/upload-files
