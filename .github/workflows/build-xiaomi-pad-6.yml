@@ -10,7 +10,7 @@ env:
   DEVICE_CODENAME : "pipa"
 
   CUSTOM_CMDS : "CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu- TARGET_PRODUCT=pipa"
-  EXTRA_CMDS : "LLVM=1 LLVM_IAS=1"
+  EXTRA_CMDS : "LLVM=1 LLVM_IAS=1 TECHPACK=n"
 
   # Исходники ядра от liyafe1997
   KERNEL_SOURCE : "https://github.com/liyafe1997/kernel_xiaomi_sm8250_mod.git"
