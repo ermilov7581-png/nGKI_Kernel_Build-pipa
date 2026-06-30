@@ -80,8 +80,8 @@ env:
   GENERATE_DTB: "false"
   GENERATE_CHIP: "qcom"
 
-  BUILD_DEBUGGER: "false"
-  SKIP_PATCH: "false"
+  BUILD_DEBUGGER: "true"
+  SKIP_PATCH: "true"
 
   # Слияние модульных конфигураций Xiaomi (то, что мы раскопали в папках!)
   BUILD_OTHER_CONFIG: "true"
