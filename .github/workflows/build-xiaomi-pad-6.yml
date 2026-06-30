@@ -14,7 +14,7 @@ env:
 
   # Исходники ядра от liyafe1997
   KERNEL_SOURCE : "https://github.com/liyafe1997/kernel_xiaomi_sm8250_mod.git"
-  KERNEL_BRANCH : "android15-lineage22-mod-upgrade-susfs"
+  KERNEL_BRANCH : "android15-lineage22-mod"
 
   # Для ядер 4.19 на Snapdragon 870 используем Proton Clang (он стабильнее всего)
   CLANG_SOURCE : "https://github.com/bachnxuan/aosp_clang_mirror/releases/download/clang-r563880c-13989888/clang-r563880c.tar.gz"
@@ -40,7 +40,7 @@ env:
   KERNELSU_AUTO_FORK : "next" # "next" означает принудительный выбор KernelSU-Next
 
   # Включаем маскировку SuSFS
-  SUSFS_ENABLE : false
+  SUSFS_ENABLE : true
   SUSFS_FIXED : false
 
   AK3_SOURCE : "https://github.com/osm0sis/AnyKernel3.git"
@@ -122,22 +122,6 @@ jobs:
           echo "CONFIG_KPROBES=n" >> arch/arm64/configs/vendor/kona_defconfig
           echo "CONFIG_HAVE_KPROBES=n" >> arch/arm64/configs/vendor/kona_defconfig
           echo 'CONFIG_LOCALVERSION="-immrtl"' >> arch/arm64/configs/vendor/kona_defconfig
-          # Создаем структуру папок
-          mkdir -p include/linux
-          
-          # Создаем файл susfs_def.h текстом
-          cat << 'EOF' > include/linux/susfs_def.h
-          #ifndef _LINUX_SUSFS_DEF_H
-          #define _LINUX_SUSFS_DEF_H
-          #endif
-          EOF
-          
-          # Создаем файл susfs.h текстом
-          cat << 'EOF' > include/linux/susfs.h
-          #ifndef _LINUX_SUSFS_H
-          #define _LINUX_SUSFS_H
-          #endif
-          EOF
 
       - name: 🧰 Patch Kernel of Re:Kernel
         uses: ./.github/workflows/patch-rekernel
