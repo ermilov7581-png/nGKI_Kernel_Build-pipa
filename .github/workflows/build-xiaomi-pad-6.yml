@@ -85,7 +85,8 @@ env:
 
   # Слияние модульных конфигураций Xiaomi (то, что мы раскопали в папках!)
   BUILD_OTHER_CONFIG: "true"
-  MERGE_CONFIG_FILES: "vendor/sm8250_common.config,vendor/xiaomi/pipa.config"
+  MERGE_CONFIG_FILES: "vendor/xiaomi/pipa.config"
+
 
   FREE_MORE_SPACE: "false"
 
