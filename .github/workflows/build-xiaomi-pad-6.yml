@@ -1,0 +1,16 @@
+name: "Build Xiaomi Pad 6 (LineageOS 22)"
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  build-kernel:
+    uses: ./.github/workflows/build-kernel.yml
+    with:
+      kernel_source: "https://github.com/liyafe1997/kernel_xiaomi_sm8250_mod"
+      kernel_source_branch: "android15-lineage22-mod"
+      kernel_defconfig: "vendor/kona_defconfig"
+      target_device: "pipa"
+      clang_version: "proton"
+      enable_ksu_next: true
+      enable_susfs: true
