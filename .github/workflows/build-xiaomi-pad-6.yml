@@ -14,7 +14,7 @@ env:
 
   # Исходники ядра от liyafe1997
   KERNEL_SOURCE : "https://github.com/liyafe1997/kernel_xiaomi_sm8250_mod.git"
-  KERNEL_BRANCH : "android15-lineage22-mod"
+  KERNEL_BRANCH : "android15-lineage22-mod-upgrade-susfs"
 
   # Для ядер 4.19 на Snapdragon 870 используем Proton Clang (он стабильнее всего)
   CLANG_SOURCE : "https://github.com/bachnxuan/aosp_clang_mirror/releases/download/clang-r563880c-13989888/clang-r563880c.tar.gz"
