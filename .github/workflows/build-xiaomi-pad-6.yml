@@ -125,6 +125,9 @@ jobs:
           echo 'CONFIG_LOCALVERSION="-immrtl"' >> arch/arm64/configs/vendor/kona_defconfig
           # 1. Откатываем все кривые изменения автоматического патчера в файле fdinfo.c
           git checkout -- fs/notify/fdinfo.c
+          echo "CONFIG_DEBUG_FS=n" >> arch/arm64/configs/vendor/kona_defconfig
+          echo "CONFIG_AUDIO_DEBUGFS=n" >> arch/arm64/configs/vendor/kona_defconfig
+
 
       - name: 🧰 Patch Kernel of Re:Kernel
         uses: ./.github/workflows/patch-rekernel
