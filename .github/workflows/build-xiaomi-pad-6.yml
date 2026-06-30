@@ -17,7 +17,7 @@ env:
   KERNEL_BRANCH : "android15-lineage22-mod"
 
   # Для ядер 4.19 на Snapdragon 870 используем Proton Clang (он стабильнее всего)
-  CLANG_SOURCE : "https://github.com/bachnxuan/aosp_clang_mirror/releases/download/clang-r563880c-13989888/clang-r563880c.tar.gz"
+  CLANG_SOURCE : "https://github.com/bachnxuan/aosp_clang_mirror/releases/download/clang-r498229b-13117565/clang-r498229b.tar.gz"
   CLANG_BRANCH : ""
 
   GCC_GNU : false
@@ -59,8 +59,8 @@ env:
   PACK_KMODULES: "false"
   KERNELSU_METHOD: "shell"
 
-  PATCHES_SOURCE: ""
-  PATCHES_BRANCH: ""
+  PATCHES_SOURCE: "https://github.com/sidex15/susfs4ksu-module"
+  PATCHES_BRANCH: "v1.5.2+"
   SUSFS_FOLDER_FIXED: "Patches"
   SUSFS_PATCH_FIXED: "susfs_patch_to_4.19.patch"
   REKERNEL_ENABLE: "false"
