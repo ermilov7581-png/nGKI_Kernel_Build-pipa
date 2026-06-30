@@ -40,7 +40,7 @@ env:
   KERNELSU_AUTO_FORK : "next" # "next" означает принудительный выбор KernelSU-Next
 
   # Включаем маскировку SuSFS
-  SUSFS_ENABLE : true
+  SUSFS_ENABLE : false
   SUSFS_FIXED : false
 
   AK3_SOURCE : "https://github.com/osm0sis/AnyKernel3.git"
@@ -122,6 +122,10 @@ jobs:
           echo "CONFIG_KPROBES=n" >> arch/arm64/configs/vendor/kona_defconfig
           echo "CONFIG_HAVE_KPROBES=n" >> arch/arm64/configs/vendor/kona_defconfig
           echo 'CONFIG_LOCALVERSION="-immrtl"' >> arch/arm64/configs/vendor/kona_defconfig
+          # Вручную подкидываем недостающие заголовочные файлы SuSFS, чтобы не было "file not found"
+          mkdir -p include/linux
+          curl -sSL "https://githubusercontent.com/susfs4android/susfs4android/main/Kernel_Patches/Kernel_Headers/susfs_def.h" -o include/linux/susfs_def.h
+          curl -sSL "https://githubusercontent.com/susfs4android/susfs4android/main/Kernel_Patches/Kernel_Headers/susfs.h" -o include/linux/susfs.h
 
       - name: 🧰 Patch Kernel of Re:Kernel
         uses: ./.github/workflows/patch-rekernel
