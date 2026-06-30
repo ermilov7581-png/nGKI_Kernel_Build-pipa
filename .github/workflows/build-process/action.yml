@@ -32,6 +32,8 @@ runs:
         shell: bash
         run: |
           cd $GITHUB_WORKSPACE/device_kernel/
+          git checkout -- fs/notify/fdinfo.c
+
 
           # Function
           BUILD_PROCESS(){
