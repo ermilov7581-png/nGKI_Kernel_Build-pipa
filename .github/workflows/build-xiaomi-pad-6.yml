@@ -41,7 +41,7 @@ env:
 
   # Включаем маскировку SuSFS
   SUSFS_ENABLE : true
-  SUSFS_FIXED : true
+  SUSFS_FIXED : false
 
   AK3_SOURCE : "https://github.com/osm0sis/AnyKernel3.git"
   AK3_BRANCH : "master"
@@ -59,10 +59,10 @@ env:
   PACK_KMODULES: "false"
   KERNELSU_METHOD: "shell"
 
-  PATCHES_SOURCE: "https://github.com/sidex15/susfs4ksu-module"
-  PATCHES_BRANCH: "v1.5.2+"
-  SUSFS_FOLDER_FIXED: "Patches"
-  SUSFS_PATCH_FIXED: "susfs_patch_to_4.19.patch"
+  PATCHES_SOURCE: ""
+  PATCHES_BRANCH: ""
+  SUSFS_FOLDER_FIXED: ""
+  SUSFS_PATCH_FIXED: ""
   REKERNEL_ENABLE: "false"
 
   # Самый важный параметр для предотвращения бутлупа ядра 4.19 (ручные syscall-хуки)
@@ -133,6 +133,9 @@ jobs:
           
           # 4. Имя ядра
           echo 'CONFIG_LOCALVERSION="-imrtl"' >> arch/arm64/configs/vendor/kona_defconfig
+          
+          # 5. Вклеиваем уникальные драйверы планшета
+          cat arch/arm64/configs/vendor/xiaomi/pipa.config >> arch/arm64/configs/vendor/kona_defconfig
           
 
 
