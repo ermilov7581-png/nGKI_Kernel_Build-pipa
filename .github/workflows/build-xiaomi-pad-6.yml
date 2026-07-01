@@ -131,8 +131,11 @@ jobs:
           echo "CONFIG_HAVE_KPROBES=n" >> arch/arm64/configs/vendor/kona_defconfig
           echo "CONFIG_DEBUG_FS=n" >> arch/arm64/configs/vendor/kona_defconfig
           # 39. Полностью отключаем конфликтующий отладочный трекер страниц памяти Google!
+          sed -i 's/CONFIG_PAGE_OWNER=y/CONFIG_PAGE_OWNER=n/g' arch/arm64/configs/vendor/kona_defconfig || true
+          sed -i 's/CONFIG_PAGE_OWNER_BOOT_DELAY=y/CONFIG_PAGE_OWNER_BOOT_DELAY=n/g' arch/arm64/configs/vendor/kona_defconfig || true
           echo "CONFIG_PAGE_OWNER=n" >> arch/arm64/configs/vendor/kona_defconfig
           echo "CONFIG_PAGE_OWNER_BOOT_DELAY=n" >> arch/arm64/configs/vendor/kona_defconfig
+          
           
           # 4. Имя ядра
           echo 'CONFIG_LOCALVERSION="-imrtl"' >> arch/arm64/configs/vendor/kona_defconfig
