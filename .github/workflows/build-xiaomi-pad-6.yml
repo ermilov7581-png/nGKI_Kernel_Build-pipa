@@ -116,20 +116,19 @@ jobs:
 
       - name: 🔗 Patch for no-kprobe
         uses: ./.github/workflows/patch-no-kprobe
-
       - name: 🪛 Extra Kernel Options
         run: |
           cd $GITHUB_WORKSPACE/device_kernel
           # 1. Защищаем файлы от автоматики патчера
           git checkout -- fs/
           
-          # 2. СНАЧАЛА выполняем откат ядра к честным офсетам версии 4.19.191
+          # 2. Выполняем честный откат ядра к нужным смещениям памяти 4.19.191
           git checkout $(git log --grep="4.19.191" --format="%H" -n 1) || true
           
-          # 3. А ВОТ ТЕПЕРЬ режем Makefile чужой платы, чтобы Гит не смог её восстановить!
-          sed -i '/qrb5165-iot-rb5.dtb/d' arch/arm64/boot/dts/vendor/qcom/Makefile || true
+          # 3. УЛЬТИМАТИВНЫЙ ФИНТ: Стираем список сборки чужих плат Qualcomm, чтобы убрать дубликат fsa4480!
+          echo "" > arch/arm64/boot/dts/vendor/qcom/Makefile || true
           
-          # 4. Вырезаем и выключаем трекер памяти page_owner
+          # 4. Вырезаем и полностью тушим трекер памяти page_owner
           sed -i 's/CONFIG_PAGE_OWNER=y/CONFIG_PAGE_OWNER=n/g' arch/arm64/configs/vendor/kona_defconfig || true
           sed -i 's/CONFIG_PAGE_OWNER_BOOT_DELAY=y/CONFIG_PAGE_OWNER_BOOT_DELAY=n/g' arch/arm64/configs/vendor/kona_defconfig || true
           echo "CONFIG_PAGE_OWNER=n" >> arch/arm64/configs/vendor/kona_defconfig
@@ -140,8 +139,8 @@ jobs:
           echo "CONFIG_HAVE_KPROBES=n" >> arch/arm64/configs/vendor/kona_defconfig
           echo "CONFIG_DEBUG_FS=n" >> arch/arm64/configs/vendor/kona_defconfig
           
-          # 6. Паспорт твоего ядра
-          echo 'CONFIG_LOCALVERSION="-Immortal_kernel"' >> arch/arm64/configs/vendor/kona_defconfig
+          # 6. Паспорт твоего бессмертного ядра
+          echo 'CONFIG_LOCALVERSION="-Immortal"' >> arch/arm64/configs/vendor/kona_defconfig
           
           # 7. Финально пришиваем уникальные драйверы Pad 6 из pipa.config
           cat arch/arm64/configs/vendor/xiaomi/pipa.config >> arch/arm64/configs/vendor/kona_defconfig
