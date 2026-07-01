@@ -139,6 +139,7 @@ jobs:
           
           # 5. Вклеиваем уникальные драйверы планшета
           cat arch/arm64/configs/vendor/xiaomi/pipa.config >> arch/arm64/configs/vendor/kona_defconfig
+          sed -i '/qrb5165-iot-rb5.dtb/d' arch/arm64/boot/dts/vendor/qcom/Makefile || true
           
 
 
